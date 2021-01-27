@@ -13,6 +13,7 @@ namespace Vipx\BotDetectBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class Configuration implements ConfigurationInterface
 {
@@ -21,8 +22,13 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('vipx_bot_detect');
+        if (Kernel::MAJOR_VERSION <= 4) {
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('vipx_bot_detect');
+        } else {
+            $treeBuilder = new TreeBuilder('vipx_bot_detect');
+            $rootNode = $treeBuilder->getRootNode();
+        }
 
         $rootNode->children()
             ->scalarNode('metadata_file')->defaultValue('basic_bot.yml')->end()
